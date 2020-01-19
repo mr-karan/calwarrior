@@ -1,24 +1,18 @@
 # calwarrior
 
-## Project setup
-```
-yarn install
+Calendar view for Taskwarrior
+
+![](screenshots/demo.png)
+
+## Usage
+
+### Local Setup
+
+```shell
+$ task export > ~/calwarrior/data/tasks.json
+$ yarn serve
 ```
 
-### Compiles and hot-reloads for development
-```
-yarn serve
-```
+### Docker
 
-### Compiles and minifies for production
-```
-yarn build
-```
-
-### Lints and fixes files
-```
-yarn lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+**WIP**
