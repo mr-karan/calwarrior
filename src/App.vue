@@ -4,7 +4,7 @@
       <v-toolbar-title>CalWarrior</v-toolbar-title>
     </v-app-bar>
 
-    <v-content>
+    <v-content v-if="!loading">
       <v-sheet tile color="grey lighten-3" class="d-flex">
         <v-btn icon class="ma-2" @click="$refs.calendar.prev()">
           <v-icon>mdi-chevron-left</v-icon>
@@ -46,17 +46,31 @@
         ></v-calendar>
       </v-sheet>
     </v-content>
+    <v-content v-else>
+      <p>Fetching data. Please wait...</p>
+    </v-content>
   </v-app>
 </template>
 
 <script>
 /*eslint no-unused-vars: ["error", { "args": "none" }]*/
-
-import tasks from "../data/tasks.json";
-
+import axios from 'axios';
 export default {
+  mounted() {
+    axios
+      .get("/api/tasks.json")
+      .then(response => {
+        this.tasks = response.data;
+      })
+      .catch(error => {
+        // eslint-disable-next-line no-console
+        console.log(error);
+      })
+      .finally(() => (this.loading = false));
+  },
   data: () => ({
-    tasks: tasks,
+    loading: true,
+    tasks: {},
     type: "month",
     types: ["month", "week", "day", "4day"],
     mode: "stack",
@@ -75,21 +89,20 @@ export default {
   methods: {
     getEvents({ start, end }) {
       const events = [];
-
-      for (let i = 0; i < tasks.length; i++) {
+      for (let i = 0; i < this.tasks.length; i++) {
         if (
-          (tasks[i].status == "pending" || tasks[i].status == "active") &&
-          typeof tasks[i].due !== "undefined"
+          (this.tasks[i].status == "pending" ||
+            this.tasks[i].status == "active") &&
+          typeof this.tasks[i].due !== "undefined"
         ) {
           events.push({
-            name: tasks[i].description,
-            start: this.formatDate(tasks[i].due),
-            end: this.formatDate(tasks[i].due),
+            name: this.tasks[i].description,
+            start: this.formatDate(this.tasks[i].due),
+            end: this.formatDate(this.tasks[i].due),
             color: this.colors[this.rnd(0, this.colors.length - 1)]
           });
         }
       }
-
       this.events = events;
     },
     getEventColor(event) {
