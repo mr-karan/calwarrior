@@ -23,3 +23,7 @@ build-docker: build
 
 run-docker:
 	docker run -p 8080:80 mrkaran/calwarrior:latest
+
+push-docker:
+	docker push mrkaran/calwarrior:latest
+	docker push mrkaran/calwarrior:${VERSION}
